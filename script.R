@@ -1,3 +1,5 @@
+# Load required libraries
+
 library(metafor)
 library(metaviz)
 library(readr)
@@ -11,6 +13,10 @@ library(devtools)
 library(ggrepel)
 devtools::install_github("MathiasHarrer/dmetar")
 library(dmetar)
+
+# Create required functions
+
+# This function takes effect size data and standard errors from a reported meta-analysis
 
 ma_pipe_sei <-
   function(dat,
@@ -126,6 +132,8 @@ ma_pipe_sei <-
   }
 
 
+# This function takes equivalence test results from the first function to create an equivalence test forest plot
+
 combine_et <-
   function(dat){
     et_plot_combine <-
@@ -170,6 +178,9 @@ combine_et <-
       et_plot_combine + geom_hline(yintercept=0, linetype="dashed", color = "black")
     et_plot_combine # Creates an equivalence test plot
   }
+
+
+# These scripts perform the required analyses on the meta-analysis data
 
 leppanen_2017_1_results <- ma_pipe_sei(
   "dat_leppanen_2017_1.csv",
@@ -266,6 +277,8 @@ leppanen_2017_6_power_median_dat$ES <- 0.04
 leppanen_2017_6_et_dat <- leppanen_2017_6_results$et
 
 
+# Create the equivalence forest plots
+
 com1 <- rbind(leppanen_2017_1_et_dat,
               leppanen_2017_2_et_dat,
               leppanen_2017_3_et_dat,
@@ -275,6 +288,9 @@ com1 <- rbind(leppanen_2017_1_et_dat,
 com1 <- combine_et(com1)
 com1 <- com1 + ggtitle("Summary effect sizes and equivalence bounds") +
   theme(plot.title = element_text(hjust = 0.5))
+
+
+# Create the meta-analysis power tile supplement 
 
 power_med <- rbind(leppanen_2017_1_power_median_dat,
                    leppanen_2017_2_power_median_dat,
@@ -301,4 +317,6 @@ tile <- tile + ggtitle("Median statistical power") +
 tile <- tile + scale_x_discrete(labels=c("observed" = "Observed \n effect", "e33" = "0.33",
                                          "e66" = "0.66"))
 tile
+
+# Combine the two plots
 com1 + tile
